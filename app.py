@@ -3,6 +3,7 @@ from moviepy.editor import VideoFileClip, concatenate_videoclips
 import streamlit as st
 import cv2
 import numpy as np
+import shutil
 
 st.set_page_config(page_title='AI B-Roll Video Splitter Tool', layout='centered')
 
@@ -24,17 +25,16 @@ if advanced_features:
 
 # Add a process button
 if st.button('Start Processing'):
-    if uploaded_files is not None:
+    if uploaded_files:
         st.write("Processing your files... This may take a few moments.")
 
         for uploaded_file in uploaded_files:
-            # Save the file to the server
-            with open(uploaded_file.name, 'wb') as f:
-                f.write(uploaded_file.getbuffer())
-            
             input_path = uploaded_file.name
             output_path = "processed_" + uploaded_file.name
 
+            with open(input_path, 'wb') as f:
+                f.write(uploaded_file.getbuffer())
+            
             def split_and_filter_video(input_path, output_path, interval, pattern_type):
                 video = VideoFileClip(input_path)
                 duration = video.duration
@@ -47,27 +47,4 @@ if st.button('Start Processing'):
                     clip_end = min(clip_start + interval, duration)
                     clip = video.subclip(clip_start, clip_end)
 
-                    if pattern_type == 'Delete every other clip' and clip_index % 2 == 0:
-                        clips.append(clip)
-                    elif pattern_type == 'Keep every third clip' and clip_index % 3 == 0:
-                        clips.append(clip)
-                    elif pattern_type == 'Keep every fourth clip' and clip_index % 4 == 0:
-                        clips.append(clip)
-
-                    clip_index += 1
-
-                if clips:
-                    final_clip = concatenate_videoclips(clips)
-                    final_clip.write_videofile(output_path, codec='libx264', fps=24)
-                    video.close()
-                    return True
-                else:
-                    video.close()
-                    return False
-
-            if split_and_filter_video(input_path, output_path, interval, pattern):
-                st.success(f"Video processed successfully! Download your file: {output_path}")
-            else:
-                st.error("Processing failed. Try adjusting your settings.")
-    else:
-        st.warning("Please upload a video file before processing.")
+                    if pattern_type == 'Delete every other clip
