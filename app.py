@@ -11,8 +11,21 @@ st.write('Upload a video, customize your split pattern, choose your resolution, 
 uploaded_files = st.file_uploader('Upload your video files', type=['mp4', 'mov', 'avi'], accept_multiple_files=True)
 
 # User input for customization
-interval = st.number_input('Enter interval length in seconds (default is 0.5):', value=0.5, min_value=0.1)
-pattern = st.selectbox('Select clip deletion pattern:', ('Delete every other clip', 'Keep every third clip', 'Keep every fourth clip'))
+interval_option = st.selectbox(
+    'Select Interval Type (Split Frequency)',
+    ('High-Energy Content (0.5 seconds)', 'Narrative-Driven Content (2 seconds)', 'Cinematic Content (3 seconds)')
+)
+
+interval_dict = {
+    'High-Energy Content (0.5 seconds)': 0.5,
+    'Narrative-Driven Content (2 seconds)': 2,
+    'Cinematic Content (3 seconds)': 3
+}
+
+interval = interval_dict[interval_option]
+
+pattern = st.selectbox('Select Clip Deletion Pattern:', 
+                       ('Delete every other clip', 'Keep every third clip', 'Keep every fourth clip', 'No deletion (keep all)'))
 
 # Resolution selection for different platforms
 resolution_option = st.selectbox(
@@ -66,6 +79,8 @@ if st.button('Start Processing'):
                         clips.append(clip)
                     elif pattern_type == 'Keep every fourth clip' and clip_index % 4 == 0:
                         clips.append(clip)
+                    elif pattern_type == 'No deletion (keep all)':
+                        clips.append(clip)
 
                     clip_index += 1
                     clip_progress.progress((idx + 1) / total_clips)
@@ -80,10 +95,10 @@ if st.button('Start Processing'):
                         codec='libx264', 
                         fps=24, 
                         preset='ultrafast',
-                        threads=4  # Use multiple threads for faster encoding
+                        threads=4  # Faster encoding using multiple threads
                     )
                     
-                    export_progress.progress(1.0)  # Complete progress bar
+                    export_progress.progress(1.0)
                     
                     video.close()
                     return output_path
