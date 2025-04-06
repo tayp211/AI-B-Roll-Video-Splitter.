@@ -33,18 +33,3 @@ if st.button('Start Processing'):
             output_path = "processed_" + uploaded_file.name
 
             with open(input_path, 'wb') as f:
-                f.write(uploaded_file.getbuffer())
-            
-            def split_and_filter_video(input_path, output_path, interval, pattern_type):
-                video = VideoFileClip(input_path)
-                duration = video.duration
-
-                clips = []
-                clip_index = 0
-                clip_points = np.arange(0, duration, interval).tolist()
-
-                for clip_start in clip_points:
-                    clip_end = min(clip_start + interval, duration)
-                    clip = video.subclip(clip_start, clip_end)
-
-                    if pattern_type == 'Delete every other clip
