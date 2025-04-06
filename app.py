@@ -64,6 +64,19 @@ if st.button('Start Processing'):
                 clip_index = 0
                 clip_points = np.arange(0, duration, interval).tolist()
 
+                if use_ai_detection:
+                    video_manager = VideoManager([input_path])
+                    scene_manager = SceneManager()
+                    scene_manager.add_detector(ContentDetector())
+                    
+                    video_manager.set_downscale_factor()
+                    video_manager.start()
+                    
+                    scene_manager.detect_scenes(video_manager)
+                    scene_list = scene_manager.get_scene_list()
+                    
+                    clip_points = [scene[0].get_seconds() for scene in scene_list]
+
                 if use_motion_filter:
                     motion_scores = []
                     for clip_start in clip_points:
