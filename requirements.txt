@@ -1,8 +1,7 @@
 streamlit==1.44.1
 moviepy==1.0.3
-opencv-python-headless==4.7.0.68
-numpy>=1.24.0
+opencv-python-headless>=4.5.3.56
+numpy>=1.21.0
 imageio==2.9.0
 imageio-ffmpeg==0.4.5
 ffmpeg-python==0.2.0
-setuptools>=65.5.0
